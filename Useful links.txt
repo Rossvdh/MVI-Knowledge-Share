@@ -1,0 +1,5 @@
+https://www.raywenderlich.com/817602-mvi-architecture-for-android-tutorial-getting-started#toc-anchor-003
+
+http://hannesdorfmann.com/android/mosby3-mvi-1
+
+https://www.youtube.com/watch?v=1vlTPp336UY
