@@ -41,4 +41,17 @@
             android:layout_height="wrap_content"
             tools:listitem="@layout/list_item" />
     </ScrollView>
+
+    <TextView
+        android:id="@+id/error_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Could not add new item"
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/new_button"
+        app:layout_constraintEnd_toStartOf="@+id/progressBar"
+        app:layout_constraintStart_toEndOf="@+id/progressBar"
+        tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

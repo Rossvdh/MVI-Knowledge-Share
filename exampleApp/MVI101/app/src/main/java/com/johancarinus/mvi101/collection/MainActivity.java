@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.jakewharton.rxbinding3.view.RxView;
 import com.johancarinus.mvi101.R;
@@ -44,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+
+    @BindView(R.id.error_message)
+    TextView errorView;
 
     private PublishSubject<Boolean> reloadIntent;
     private CompositeDisposable compositeDisposable;
@@ -109,7 +113,13 @@ public class MainActivity extends AppCompatActivity {
             showResults(state.getListItems());
         } else if (state instanceof MainActivityState.ErrorState) {
             // TODO: Render error state
+            showErrorState(state);
         }
+    }
+
+    private void showErrorState(MainActivityState state) {
+        showLoading(false);
+        errorView.setVisibility(View.VISIBLE);
     }
 
     private void showLoading(boolean isLoading) {
@@ -117,10 +127,12 @@ public class MainActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
             newButton.setVisibility(View.GONE);
             recyclerView.setVisibility(View.GONE);
+            errorView.setVisibility(View.GONE);
         } else {
             progressBar.setVisibility(View.GONE);
             newButton.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.VISIBLE);
+            errorView.setVisibility(View.GONE);
         }
     }
 

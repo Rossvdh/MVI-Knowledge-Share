@@ -47,8 +47,10 @@ public class MainActivityModel {
         }
     }
 
+    //specify what to do on the user's intents
     private void bindIntents(MainActivity mainActivity) {
-        compositeDisposable.add(
+        compositeDisposable.add(//user's intent is to add a new item
+                //we specify how to react to that intent (i.e. how to add the new item)
                 mainActivity.addItemIntent()
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnNext(new Consumer<String>() {
@@ -57,8 +59,33 @@ public class MainActivityModel {
                                 Log.i(TAG, "add item intent observable on next");
 //                                reduceStateWithAdd(s);
                             }
-                        }).subscribe()
+                        })
+                        .doOnError(new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) {
+                                Log.i(TAG, "add item intent observable on error");
+//                                reduceStateWithError(throwable);
+                            }
+                        })
+                        .subscribe(new Consumer<String>() {
+                                       // on success
+                                       @Override
+                                       public void accept(String s) throws Exception {
+                                           Log.i(TAG, "add item intent subscriber on next");
+                                           reduceStateWithAdd(s);
+                                       }
+                                   },
+                                new Consumer<Throwable>() {
+                                    //on error
+                                    @Override
+                                    public void accept(Throwable throwable) throws Exception {
+                                        Log.i(TAG, "add item intent subscriber on error");
+                                        reduceStateWithError(throwable);
+                                    }
+                                }
+                        )
         );
+
         compositeDisposable.add(
                 mainActivity.removeItemIntent()
                     .observeOn(AndroidSchedulers.mainThread())
@@ -68,7 +95,26 @@ public class MainActivityModel {
                             Log.i(TAG, "remove item intent on success");
 //                            reduceStateWithRemove(integer.intValue());
                         }
-                    }).subscribe()
+                    })
+                    .subscribe(
+                            new Consumer<Integer>() {
+                                // on success
+                                @Override
+                                public void accept(Integer s) throws Exception {
+                                    Log.i(TAG, "remove item intent subscriber on success");
+                                    reduceStateWithRemove(s);
+                                }
+                            },
+                            new Consumer<Throwable>() {
+                                //on error
+                                @Override
+                                public void accept(Throwable throwable) throws Exception {
+                                    Log.i(TAG, "remove item intent subscriber on error");
+                                    reduceStateWithError(throwable);
+                                }
+                            }
+
+                    )
         );
     }
 
@@ -112,6 +158,13 @@ public class MainActivityModel {
                                     }
                             )
             );
+        }
+    }
+
+    private void reduceStateWithError(Throwable throwable) {
+        if(! (currentStateValue instanceof MainActivityState.ErrorState)){
+            currentStateValue = new MainActivityState.ErrorState(throwable);
+            currentState.onNext(currentStateValue);
         }
     }
 
